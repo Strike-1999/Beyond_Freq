@@ -1,0 +1,23 @@
+BeyondFreq-L2I generator release
+
+Project: Unbiased Object Detection Beyond Frequency with Visually Prompted Image Synthesis (ICLR2026)
+Authors: Xinhao Cai, Liulei Li, Gensheng Pei, Tao Chen, Jinshan Pan, Yazhou Yao, Wenguan Wang.
+
+Third-party provenance is retained separately from the BeyondFreq model and package names:
+
+* The imported L2I source snapshot inherits code distributed by
+  https://github.com/UTokyo-FieldPhenomics-Lab/DODA
+  Copyright(c)2024 illrayy. MIT license: licenses/upstream-l2i-MIT.txt.
+* The control architecture and sampler are adapted from ControlNet:
+  https://github.com/lllyasviel/ControlNet
+  Apache2.0 license: licenses/ControlNet-Apache-2.0.txt.
+* The ldm architecture derives from Stable Diffusion and preserves source
+  attribution comments. Original code/model terms:
+  https://github.com/CompVis/stable-diffusion
+  licenses/Stable-Diffusion-OpenRAIL-M.txt.
+* The CLIP tokenizer vocabulary follows openai/clip-vit-large-patch14;
+  tokenizer/text assets and code: licenses/CLIP-MIT.txt.
+
+Modified files identify compatibility changes in their headers. The checkpoint
+export changes serialization and public names only; it preserves all original
+tensor names, values and dtypes. Model weights retain OpenRAIL-M restrictions.

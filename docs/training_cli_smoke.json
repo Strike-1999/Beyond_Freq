@@ -1,0 +1,28 @@
+{
+  "training_CLI": "passed",
+  "optimizer_updates": 1,
+  "global_step": 1,
+  "precision": 32,
+  "physical_GPU": 0,
+  "Lightning_version": "1.9.5",
+  "checkpoint_written": true,
+  "optimizer_states_written": true,
+  "representative_parameter_checks": {
+    "control_model.input_blocks.0.0.weight": {
+      "unchanged": false,
+      "max_change": 5.036592483520508e-06
+    },
+    "model.diffusion_model.input_blocks.0.0.weight": {
+      "unchanged": true,
+      "max_change": 0.0
+    },
+    "first_stage_model.encoder.conv_in.weight": {
+      "unchanged": true,
+      "max_change": 0.0
+    },
+    "cond_stage_model.transformer.text_model.embeddings.token_embedding.weight": {
+      "unchanged": true,
+      "max_change": 0.0
+    }
+  }
+}

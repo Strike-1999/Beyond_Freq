@@ -1,0 +1,21 @@
+{
+  "strict_load": true,
+  "parameters": 1427514427,
+  "blueprints_identical": true,
+  "prompts_identical": true,
+  "noise_prediction_max_error": 0.0,
+  "DDIM50_image_max_error": 0.0,
+  "controlnet_backward_verified": true,
+  "controlnet_gradient_norm": 0.7716604663763623,
+  "UNet_frozen": true,
+  "unfrozen_UNet_input_block_backward_verified": true,
+  "unfrozen_UNet_input_block_gradient_norm": 0.26277783513069153,
+  "controlnet_frozen_for_UNet_test": true,
+  "mode": "renamed",
+  "image_id": 139,
+  "seed": 451,
+  "steps": 50,
+  "seconds": 25.51892078993842,
+  "physical_GPU": 0,
+  "peak_GPU_GiB": 10.11335563659668
+}
