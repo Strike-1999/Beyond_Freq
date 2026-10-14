@@ -3,6 +3,7 @@ import argparse
 import hashlib
 import json
 from pathlib import Path
+import re
 
 import torch
 from safetensors import safe_open
@@ -22,10 +23,17 @@ def main():
     parser.add_argument('--checkpoint', type=Path, required=True)
     parser.add_argument('--output', type=Path, required=True)
     parser.add_argument('--max-shard-bytes', type=int, default=2_000_000_000)
+    parser.add_argument('--prefix', help='Optional shard filename stem; defaults to the saved update count')
     args = parser.parse_args()
     args.output.mkdir(parents=True, exist_ok=True)
     saved = torch.load(args.checkpoint, map_location='cpu', weights_only=False)
     state = saved.get('state_dict', saved)
+    step = saved.get('global_step')
+    prefix = args.prefix or ('beyondfreq_l2i_coco512_100k' if step == 100000 else
+                            f'beyondfreq_l2i_coco512_{step}steps' if step is not None else
+                            'beyondfreq_l2i_coco512_trained')
+    if not re.fullmatch(r'[A-Za-z0-9_-]+', prefix):
+        parser.error('--prefix must contain only letters, digits, underscores and hyphens')
     groups, group, size = [], {}, 0
     for key, tensor in state.items():
         if not isinstance(tensor, torch.Tensor):
@@ -40,7 +48,6 @@ def main():
         size += tensor_bytes
     if group:
         groups.append(group)
-    prefix = 'beyondfreq_l2i_coco512_100k'
     weight_map, files = {}, []
     for i, tensors in enumerate(groups, 1):
         filename = f'{prefix}-{i:05d}-of-{len(groups):05d}.safetensors'

@@ -1,0 +1,86 @@
+{
+  "verified_date": "2026-10-14",
+  "scope": "Original COCO512 generator training workflow",
+  "source_recovery_and_parity": {
+    "runtime": {
+      "torch": "1.12.1+cu113"
+    },
+    "original_manifest_images": 108151,
+    "full_manifest_image_selection_and_order_identical": true,
+    "original_prepared_PNGs_bitwise_identical": 67,
+    "original_prompts_identical": 67,
+    "dataset_tensors_bitwise_identical": 67,
+    "preparation_filter_fixture": {
+      "images_in_json": 69,
+      "prepared": 67,
+      "excluded_crowd_images": 1,
+      "excluded_empty_images": 1
+    },
+    "sd15_initialized_source_control_tensors_identical": 298,
+    "zero_convolution_tensors_verified": 28,
+    "initialization": {
+      "backbone_loaded": 1143,
+      "control_copied_from_unet": 298,
+      "new_control_tensors": 42,
+      "default_diffusion_buffers": 0
+    },
+    "source_sha256": {
+      "train.py": "7c2eae0e2893fd1dc17bb0f10609a7591d067577e2219baa059b5d5b5578202f",
+      "prepare_coco.py": "f92eeac752f896f82646f8438c193db2932bc9d3b7e2dff97c75c8f98cd9d3c4",
+      "utils/coco_dataset.py": "e5487b9f134b533e7719e7fe1fd2ba72fde20dce7ea5895868f2023d63dcbbd0",
+      "cldm/cldm_coco.py": "8d3c99bea39149cf9a7ab715856f53ae9c402ea43ab8fda0d54e85b7fb044070",
+      "coco_train_512.yaml": "247c10dde343cb3ad649e7c60b3d71e5b9f91c3d2b4cfe2c5a241de55017d6dd"
+    }
+  },
+  "single_GPU_integration": {
+    "runtime": {
+      "torch": "2.5.1+cu121"
+    },
+    "physical_GPU": 0,
+    "resolution": 512,
+    "initialization_cli_passed": true,
+    "initialization_input": "CompVis state fixture extracted from the released frozen backbone",
+    "initial_training_updates": 2,
+    "optimizer_adam_step_before_resume": 2,
+    "frozen_backbone_state_tensors_unchanged": 1130,
+    "control_zero_convolution_updated": true,
+    "training_sample_previews": 6,
+    "resumed_global_step": 3,
+    "optimizer_adam_step_after_resume": 3,
+    "optimizer_and_loop_state_restored": true,
+    "full_checkpoint_bytes": 8601270590,
+    "seconds": 274.93530621007085,
+    "validation_noise_loss_recorded": true
+  },
+  "two_GPU_integration": {
+    "runtime": {
+      "torch": "2.5.1+cu121"
+    },
+    "physical_GPUs": [
+      0,
+      1
+    ],
+    "DDP_training_update_passed": true,
+    "global_step": 1,
+    "optimizer_state_written": true,
+    "training_configuration_written_once_by_rank_zero": true,
+    "validation_noise_loss_recorded": true,
+    "validation_sync_dist_enabled": true,
+    "sample_previews_written_by_rank_zero": 4,
+    "sample_preview_steps": 5,
+    "sample_preview_guidance": 4.5,
+    "control_strength": 1.0,
+    "seconds": 107.40929599292576,
+    "export_saved_update_count_and_lossless_roundtrip_verified": true
+  },
+  "supported_training_runtime": {
+    "Python": "3.10",
+    "Torch": "2.5.1+cu121",
+    "Lightning": "1.9.5"
+  },
+  "validation_limits": [
+    "Initialization inputs in the tests are backbone state fixtures derived from the original initialized model or the released frozen backbone.",
+    "Short integration tests use two real COCO images at 512x512; previews use five DDIM steps.",
+    "No new full 100000-update run or reproduction of paper metrics is claimed."
+  ]
+}

@@ -1,0 +1,17 @@
+# Original COCO512 hyperparameters, with a fresh-run target of 100,000 optimizer updates.
+# Paths and initialization are supplied through tools/train_generator.py.
+batch_size: 4             # per GPU
+workers: 12              # per process
+devices: 4
+max_steps: 100000
+learning_rate: 0.000005
+accumulate: 1
+precision: 32
+seed: 23
+size: 512
+flip_probability: 0.5
+checkpoint_every: 5000
+preview_every: 5000
+preview_images: 4
+preview_steps: 50
+preview_guidance: 9.0

@@ -22,7 +22,11 @@ CUDA_VISIBLE_DEVICES=0 python tools/generate.py \
 
 Alternatively, pass `--hf-repo Strike1999/BeyondFreq-L2I-COCO512` and optionally `--revision COMMIT_SHA`. COCO-format layout input is demonstrated in the main README. An image's initial noise uses `seed+image_id*1009`, so unfinished batches can resume without regenerating completed PNGs. The default CUDA denoiser precision is BF16; weights are stored at their original precision. Use `--precision fp32` for FP32 denoising.
 
-## Generator fine-tuning
+## Generator training and fine-tuning
+
+For the complete original training pipeline, begin with `tools/prepare_coco.py`, then
+initialize from SD1.5 and train on the prepared PNG/prompt pairs. See the
+[training guide](training.md) and `configs/training/coco512.yaml` for the full workflow.
 
 ```bash
 CUDA_VISIBLE_DEVICES=0 python tools/train_generator.py \
@@ -30,10 +34,10 @@ CUDA_VISIBLE_DEVICES=0 python tools/train_generator.py \
   --annotations datasets/coco/annotations/instances_train2017.json \
   --images datasets/coco/train2017 \
   --output logs/beyondfreq_l2i_coco512 \
-  --batch-size 8 --learning-rate 5e-6 --max-steps 100000
+  --devices 1 --batch-size 8 --learning-rate 5e-6 --max-steps 100000
 ```
 
-This command fine-tunes the ControlNet using the diffusion noise-prediction loss, with the backbone, VAE and CLIP frozen. It uses paired horizontal flips and filters crowd annotations. It starts from the supplied checkpoint; the requested steps are additional optimization steps. `--resume` restores a Lightning training checkpoint, including optimizer states. `--devices 2` together with `CUDA_VISIBLE_DEVICES=0,1` enables two-GPU DDP.
+This command fine-tunes the ControlNet using the diffusion noise-prediction loss, with the backbone, VAE and CLIP frozen. It uses paired horizontal flips and filters crowd annotations. It starts from the supplied checkpoint; the requested steps are additional optimization steps. To restore optimizer states and update counters, use `--resume` on its own instead of `--weights`. `--devices 2` together with `CUDA_VISIBLE_DEVICES=0,1` enables two-GPU DDP. Training control strength is1.0, following the original model default; inference defaults to1.5.
 
 The model wrapper also exposes `predict_noise`, `set_trainable(control=True, unet=True)` and `sample(..., differentiable=True)` for downstream research. These APIs permit generator gradients; they do not implement a detector loss, representation-score planner or the paper's complete detector training procedure.
 

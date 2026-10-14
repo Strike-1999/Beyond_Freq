@@ -9,6 +9,42 @@ from torch.utils.data import Dataset
 from beyond_freq.blueprints import BlueprintRenderer
 
 
+class PreparedBlueprintDataset(Dataset):
+    """Original training interface: PNG blueprint + JPEG target + filename;prompt."""
+    def __init__(self, prompts, blueprints, images, size=512, flip_probability=.5):
+        self.root = Path(images)
+        self.blueprints = Path(blueprints)
+        self.samples = []
+        for number, line in enumerate(Path(prompts).read_text(encoding='utf-8').splitlines(), 1):
+            if not line.strip():
+                continue
+            name, separator, prompt = line.partition(';')
+            path = Path(name)
+            if not separator or not prompt or path.is_absolute() or '..' in path.parts:
+                raise ValueError(f'Invalid filename;prompt at line {number} of {prompts}')
+            self.samples.append((path, prompt))
+        if not self.samples:
+            raise ValueError(f'Empty prompt manifest: {prompts}')
+        self.size = size
+        self.flip_probability = flip_probability
+
+    def __len__(self):
+        return len(self.samples)
+
+    def __getitem__(self, index):
+        name, prompt = self.samples[index]
+        source_path, target_path = self.blueprints / name, self.root / name.with_suffix('.jpg')
+        source, target = cv2.imread(str(source_path)), cv2.imread(str(target_path))
+        if source is None or target is None:
+            raise FileNotFoundError(source_path if source is None else target_path)
+        source = cv2.resize(cv2.cvtColor(source, cv2.COLOR_BGR2RGB), (self.size, self.size))
+        target = cv2.resize(cv2.cvtColor(target, cv2.COLOR_BGR2RGB), (self.size, self.size))
+        if random.random() < self.flip_probability:
+            source, target = source[:, ::-1].copy(), target[:, ::-1].copy()
+        return {'jpg': target.astype(np.float32) / 127.5 - 1.,
+                'hint': source.astype(np.float32) / 255., 'txt': prompt}
+
+
 class CocoBlueprintDataset(Dataset):
     def __init__(self, annotations, images, size=512, flip_probability=.5):
         coco = json.loads(Path(annotations).read_text())

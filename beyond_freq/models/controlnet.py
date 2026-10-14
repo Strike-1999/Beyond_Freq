@@ -310,6 +310,25 @@ class BlueprintControlNet(nn.Module):
 
 class BlueprintLatentDiffusion(LatentDiffusion):
 
+    def on_load_checkpoint(self, checkpoint):
+        # Older CLIP checkpoints serialize this deterministic buffer; modern ones omit it.
+        embeddings = self.cond_stage_model.transformer.text_model.embeddings
+        key = 'cond_stage_model.transformer.text_model.embeddings.position_ids'
+        if key in checkpoint['state_dict']:
+            embeddings._non_persistent_buffers_set.discard('position_ids')
+        else:
+            embeddings._non_persistent_buffers_set.add('position_ids')
+
+    @torch.no_grad()
+    def validation_step(self, batch, batch_idx):
+        _, losses = self.shared_step(batch)
+        with self.ema_scope():
+            _, ema_losses = self.shared_step(batch)
+        # Retain the original metric names, aggregating across all DDP ranks.
+        losses.update({key + '_ema': value for key, value in ema_losses.items()})
+        self.log_dict(losses, prog_bar=False, logger=True, on_step=False, on_epoch=True,
+                      sync_dist=True, batch_size=batch[self.first_stage_key].shape[0])
+
     def __init__(self, control_stage_config, control_key, only_mid_control, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.control_model = instantiate_from_config(control_stage_config)
